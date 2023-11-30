@@ -82,9 +82,7 @@ export class HelloWorldModel extends Observable {
       }
     };
 
-    setTimeout(() => {
-      chart.setOption(options as echarts.EChartOption);
-    }, 1000);
+    chart.setOption(options as echarts.EChartOption);
   }
 
   private updateMessage() {
