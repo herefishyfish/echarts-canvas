@@ -6,7 +6,7 @@ index 01870b9..58eff13 100644
      nativeElement: any;
      private _width;
      private _height;
-+    lang: string = '';
++    lang: string;
      _instance: any;
      constructor(tagName: any);
      get classList(): any;
