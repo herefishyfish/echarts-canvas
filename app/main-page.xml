@@ -1,9 +1,7 @@
-<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="navigatingTo">
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" xmlns:canvas="@nativescript/canvas" navigatingTo="navigatingTo" actionBarHidden="true">
     <ActionBar title="My App" icon="" />
 
-    <StackLayout class="p-20">
-        <Label text="Tap the button" class="h1 text-center" />
-        <Button text="TAP" tap="{{ onTap }}" class="-primary" />
-        <Label text="{{ message }}" class="h2 text-center" textWrap="true" />
-    </StackLayout>
+    <GridLayout>
+        <canvas:Canvas id="canvas" width="100%" height="100%" ready="{{canvasReady}}"/>
+    </GridLayout>
 </Page>

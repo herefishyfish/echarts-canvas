@@ -4,12 +4,20 @@
   "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@nativescript/canvas": "2.0.0-alpha.32",
+    "@nativescript/canvas-media": "^2.0.0-alpha.32",
+    "@nativescript/canvas-polyfill": "^2.0.0-alpha.32",
+    "@nativescript/canvas-three": "^2.0.0-alpha.32",
     "@nativescript/core": "~8.6.0",
-    "@nativescript/theme": "~3.0.2"
+    "@nativescript/theme": "~3.0.2",
+    "echarts": "^5.4.3"
   },
   "devDependencies": {
+    "@nativescript/android": "8.6.2",
+    "@nativescript/preview-cli": "1.0.12",
     "@nativescript/types": "~8.6.0",
     "@nativescript/webpack": "~5.0.18",
+    "@types/echarts": "^4.9.22",
     "typescript": "~5.2.0"
   }
 }
