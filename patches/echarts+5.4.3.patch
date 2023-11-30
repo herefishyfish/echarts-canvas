@@ -1,0 +1,507 @@
+diff --git a/node_modules/echarts/dist/echarts.common.js b/node_modules/echarts/dist/echarts.common.js
+index eb517e2..5760b32 100644
+--- a/node_modules/echarts/dist/echarts.common.js
++++ b/node_modules/echarts/dist/echarts.common.js
+@@ -98,27 +98,27 @@
+     }
+     function detect(ua, env) {
+         var browser = env.browser;
+-        var firefox = ua.match(/Firefox\/([\d.]+)/);
+-        var ie = ua.match(/MSIE\s([\d.]+)/)
+-            || ua.match(/Trident\/.+?rv:(([\d.]+))/);
+-        var edge = ua.match(/Edge?\/([\d.]+)/);
+-        var weChat = (/micromessenger/i).test(ua);
+-        if (firefox) {
+-            browser.firefox = true;
+-            browser.version = firefox[1];
+-        }
+-        if (ie) {
+-            browser.ie = true;
+-            browser.version = ie[1];
+-        }
+-        if (edge) {
+-            browser.edge = true;
+-            browser.version = edge[1];
+-            browser.newEdge = +edge[1].split('.')[0] > 18;
+-        }
+-        if (weChat) {
+-            browser.weChat = true;
+-        }
++        // var firefox = ua.match(/Firefox\/([\d.]+)/);
++        // var ie = ua.match(/MSIE\s([\d.]+)/)
++        //     || ua.match(/Trident\/.+?rv:(([\d.]+))/);
++        // var edge = ua.match(/Edge?\/([\d.]+)/);
++        // var weChat = (/micromessenger/i).test(ua);
++        // if (firefox) {
++        //     browser.firefox = true;
++        //     browser.version = firefox[1];
++        // }
++        // if (ie) {
++        //     browser.ie = true;
++        //     browser.version = ie[1];
++        // }
++        // if (edge) {
++        //     browser.edge = true;
++        //     browser.version = edge[1];
++        //     browser.newEdge = +edge[1].split('.')[0] > 18;
++        // }
++        // if (weChat) {
++        //     browser.weChat = true;
++        // }
+         env.svgSupported = typeof SVGRect !== 'undefined';
+         env.touchEventsSupported = 'ontouchstart' in window && !browser.ie && !browser.edge;
+         env.pointerEventsSupported = 'onpointerdown' in window
+@@ -17667,7 +17667,7 @@
+         // color: '#000',
+         // decoration: 'none',
+         // PENDING
+-        fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
++        // fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
+         // fontFamily: 'Arial, Verdana, sans-serif',
+         fontSize: 12,
+         fontStyle: 'normal',
+diff --git a/node_modules/echarts/dist/echarts.esm.js b/node_modules/echarts/dist/echarts.esm.js
+index d148cc6..71243b8 100644
+--- a/node_modules/echarts/dist/echarts.esm.js
++++ b/node_modules/echarts/dist/echarts.esm.js
+@@ -17872,7 +17872,7 @@ var globalDefault = {
+     // color: '#000',
+     // decoration: 'none',
+     // PENDING
+-    fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
++    // fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
+     // fontFamily: 'Arial, Verdana, sans-serif',
+     fontSize: 12,
+     fontStyle: 'normal',
+diff --git a/node_modules/echarts/dist/echarts.js b/node_modules/echarts/dist/echarts.js
+index 5ca1737..06b6914 100644
+--- a/node_modules/echarts/dist/echarts.js
++++ b/node_modules/echarts/dist/echarts.js
+@@ -17878,7 +17878,7 @@
+         // color: '#000',
+         // decoration: 'none',
+         // PENDING
+-        fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
++        // fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
+         // fontFamily: 'Arial, Verdana, sans-serif',
+         fontSize: 12,
+         fontStyle: 'normal',
+diff --git a/node_modules/echarts/dist/echarts.simple.js b/node_modules/echarts/dist/echarts.simple.js
+index f6f1662..4fd2242 100644
+--- a/node_modules/echarts/dist/echarts.simple.js
++++ b/node_modules/echarts/dist/echarts.simple.js
+@@ -17174,7 +17174,7 @@
+         // color: '#000',
+         // decoration: 'none',
+         // PENDING
+-        fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
++        // fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
+         // fontFamily: 'Arial, Verdana, sans-serif',
+         fontSize: 12,
+         fontStyle: 'normal',
+diff --git a/node_modules/echarts/lib/component/tooltip/TooltipHTMLContent.js b/node_modules/echarts/lib/component/tooltip/TooltipHTMLContent.js
+index 1b17320..96861c1 100644
+--- a/node_modules/echarts/lib/component/tooltip/TooltipHTMLContent.js
++++ b/node_modules/echarts/lib/component/tooltip/TooltipHTMLContent.js
+@@ -227,63 +227,66 @@ function () {
+       return null;
+     }
+ 
+-    var el = document.createElement('div'); // TODO: TYPE
+-
+-    el.domBelongToZr = true;
+-    this.el = el;
+-    var zr = this._zr = api.getZr();
+-    var appendToBody = this._appendToBody = opt && opt.appendToBody;
+-    makeStyleCoord(this._styleCoord, zr, appendToBody, api.getWidth() / 2, api.getHeight() / 2);
+-
+-    if (appendToBody) {
+-      document.body.appendChild(el);
+-    } else {
+-      container.appendChild(el);
+-    }
+-
+-    this._container = container; // FIXME
+-    // Is it needed to trigger zr event manually if
+-    // the browser do not support `pointer-events: none`.
+-
+-    var self = this;
+-
+-    el.onmouseenter = function () {
+-      // clear the timeout in hideLater and keep showing tooltip
+-      if (self._enterable) {
+-        clearTimeout(self._hideTimeout);
+-        self._show = true;
+-      }
+-
+-      self._inContent = true;
+-    };
+-
+-    el.onmousemove = function (e) {
+-      e = e || window.event;
+-
+-      if (!self._enterable) {
+-        // `pointer-events: none` is set to tooltip content div
+-        // if `enterable` is set as `false`, and `el.onmousemove`
+-        // can not be triggered. But in browser that do not
+-        // support `pointer-events`, we need to do this:
+-        // Try trigger zrender event to avoid mouse
+-        // in and out shape too frequently
+-        var handler = zr.handler;
+-        var zrViewportRoot = zr.painter.getViewportRoot();
+-        normalizeEvent(zrViewportRoot, e, true);
+-        handler.dispatch('mousemove', e);
+-      }
+-    };
+-
+-    el.onmouseleave = function () {
+-      // set `_inContent` to `false` before `hideLater`
+-      self._inContent = false;
+-
+-      if (self._enterable) {
+-        if (self._show) {
+-          self.hideLater(self._hideDelay);
+-        }
+-      }
+-    };
++    console.log('TooltipHTMLContent', container, api, opt); // var el = document.createElement('div'); // TODO: TYPE
++
++    // var el = document.createElement('div'); // TODO: TYPE
++
++    // el.domBelongToZr = true;
++    // this.el = el;
++    // var zr = this._zr = api.getZr();
++    // var appendToBody = this._appendToBody = opt && opt.appendToBody;
++    // makeStyleCoord(this._styleCoord, zr, appendToBody, api.getWidth() / 2, api.getHeight() / 2);
++
++    // if (appendToBody) {
++    //   document.body.appendChild(el);
++    // } else {
++
++    //   container.addChild(el);
++    // }
++
++    // this._container = container; // FIXME
++    // // Is it needed to trigger zr event manually if
++    // // the browser do not support `pointer-events: none`.
++
++    // var self = this;
++
++    // el.onmouseenter = function () {
++    //   // clear the timeout in hideLater and keep showing tooltip
++    //   if (self._enterable) {
++    //     clearTimeout(self._hideTimeout);
++    //     self._show = true;
++    //   }
++
++    //   self._inContent = true;
++    // };
++
++    // el.onmousemove = function (e) {
++    //   e = e || window.event;
++
++    //   if (!self._enterable) {
++    //     // `pointer-events: none` is set to tooltip content div
++    //     // if `enterable` is set as `false`, and `el.onmousemove`
++    //     // can not be triggered. But in browser that do not
++    //     // support `pointer-events`, we need to do this:
++    //     // Try trigger zrender event to avoid mouse
++    //     // in and out shape too frequently
++    //     var handler = zr.handler;
++    //     var zrViewportRoot = zr.painter.getViewportRoot();
++    //     normalizeEvent(zrViewportRoot, e, true);
++    //     handler.dispatch('mousemove', e);
++    //   }
++    // };
++
++    // el.onmouseleave = function () {
++    //   // set `_inContent` to `false` before `hideLater`
++    //   self._inContent = false;
++
++    //   if (self._enterable) {
++    //     if (self._show) {
++    //       self.hideLater(self._hideDelay);
++    //     }
++    //   }
++    // };
+   }
+   /**
+    * Update when tooltip is rendered
+@@ -293,110 +296,109 @@ function () {
+   TooltipHTMLContent.prototype.update = function (tooltipModel) {
+     // FIXME
+     // Move this logic to ec main?
+-    var container = this._container;
+-    var position = getComputedStyle(container, 'position');
+-    var domStyle = container.style;
++    // var container = this._container;
++    // var position = getComputedStyle(container, 'position');
++    // var domStyle = container.style;
+ 
+-    if (domStyle.position !== 'absolute' && position !== 'absolute') {
+-      domStyle.position = 'relative';
+-    } // move tooltip if chart resized
++    // if (domStyle.position !== 'absolute' && position !== 'absolute') {
++      // domStyle.position = 'relative';
++    // } // move tooltip if chart resized
+ 
++    // var alwaysShowContent = tooltipModel.get('alwaysShowContent');
++    // alwaysShowContent && this._moveIfResized(); // update alwaysShowContent
+ 
+-    var alwaysShowContent = tooltipModel.get('alwaysShowContent');
+-    alwaysShowContent && this._moveIfResized(); // update alwaysShowContent
++    // this._alwaysShowContent = alwaysShowContent; // update className
+ 
+-    this._alwaysShowContent = alwaysShowContent; // update className
+-
+-    this.el.className = tooltipModel.get('className') || ''; // Hide the tooltip
++    // this.el.className = tooltipModel.get('className') || ''; // Hide the tooltip
+     // PENDING
+     // this.hide();
+   };
+ 
+   TooltipHTMLContent.prototype.show = function (tooltipModel, nearPointColor) {
+-    clearTimeout(this._hideTimeout);
+-    clearTimeout(this._longHideTimeout);
+-    var el = this.el;
+-    var style = el.style;
+-    var styleCoord = this._styleCoord;
+-
+-    if (!el.innerHTML) {
+-      style.display = 'none';
+-    } else {
+-      style.cssText = gCssText + assembleCssText(tooltipModel, !this._firstShow, this._longHide) // initial transform
+-      + assembleTransform(styleCoord[0], styleCoord[1], true) + ("border-color:" + convertToColorString(nearPointColor) + ";") + (tooltipModel.get('extraCssText') || '') // If mouse occasionally move over the tooltip, a mouseout event will be
+-      // triggered by canvas, and cause some unexpectable result like dragging
+-      // stop, "unfocusAdjacency". Here `pointer-events: none` is used to solve
+-      // it. Although it is not supported by IE8~IE10, fortunately it is a rare
+-      // scenario.
+-      + (";pointer-events:" + (this._enterable ? 'auto' : 'none'));
+-    }
+-
+-    this._show = true;
+-    this._firstShow = false;
+-    this._longHide = false;
++    // clearTimeout(this._hideTimeout);
++    // clearTimeout(this._longHideTimeout);
++    // var el = this.el;
++    // var style = el.style;
++    // var styleCoord = this._styleCoord;
++
++    // if (!el.innerHTML) {
++    //   style.display = 'none';
++    // } else {
++    //   style.cssText = gCssText + assembleCssText(tooltipModel, !this._firstShow, this._longHide) // initial transform
++    //   + assembleTransform(styleCoord[0], styleCoord[1], true) + ("border-color:" + convertToColorString(nearPointColor) + ";") + (tooltipModel.get('extraCssText') || '') // If mouse occasionally move over the tooltip, a mouseout event will be
++    //   // triggered by canvas, and cause some unexpectable result like dragging
++    //   // stop, "unfocusAdjacency". Here `pointer-events: none` is used to solve
++    //   // it. Although it is not supported by IE8~IE10, fortunately it is a rare
++    //   // scenario.
++    //   + (";pointer-events:" + (this._enterable ? 'auto' : 'none'));
++    // }
++
++    // this._show = true;
++    // this._firstShow = false;
++    // this._longHide = false;
+   };
+ 
+   TooltipHTMLContent.prototype.setContent = function (content, markers, tooltipModel, borderColor, arrowPosition) {
+-    var el = this.el;
+-
+-    if (content == null) {
+-      el.innerHTML = '';
+-      return;
+-    }
+-
+-    var arrow = '';
+-
+-    if (isString(arrowPosition) && tooltipModel.get('trigger') === 'item' && !shouldTooltipConfine(tooltipModel)) {
+-      arrow = assembleArrow(tooltipModel, borderColor, arrowPosition);
+-    }
+-
+-    if (isString(content)) {
+-      el.innerHTML = content + arrow;
+-    } else if (content) {
+-      // Clear previous
+-      el.innerHTML = '';
+-
+-      if (!isArray(content)) {
+-        content = [content];
+-      }
+-
+-      for (var i = 0; i < content.length; i++) {
+-        if (isDom(content[i]) && content[i].parentNode !== el) {
+-          el.appendChild(content[i]);
+-        }
+-      } // no arrow if empty
+-
+-
+-      if (arrow && el.childNodes.length) {
+-        // no need to create a new parent element, but it's not supported by IE 10 and older.
+-        // const arrowEl = document.createRange().createContextualFragment(arrow);
+-        var arrowEl = document.createElement('div');
+-        arrowEl.innerHTML = arrow;
+-        el.appendChild(arrowEl);
+-      }
+-    }
++    // var el = this.el;
++
++    // if (content == null) {
++    //   el.innerHTML = '';
++    //   return;
++    // }
++
++    // var arrow = '';
++
++    // if (isString(arrowPosition) && tooltipModel.get('trigger') === 'item' && !shouldTooltipConfine(tooltipModel)) {
++    //   arrow = assembleArrow(tooltipModel, borderColor, arrowPosition);
++    // }
++
++    // if (isString(content)) {
++    //   el.innerHTML = content + arrow;
++    // } else if (content) {
++    //   // Clear previous
++    //   el.innerHTML = '';
++
++    //   if (!isArray(content)) {
++    //     content = [content];
++    //   }
++
++    //   for (var i = 0; i < content.length; i++) {
++    //     if (isDom(content[i]) && content[i].parentNode !== el) {
++    //       el.appendChild(content[i]);
++    //     }
++    //   } // no arrow if empty
++
++
++    //   if (arrow && el.childNodes.length) {
++    //     // no need to create a new parent element, but it's not supported by IE 10 and older.
++    //     // const arrowEl = document.createRange().createContextualFragment(arrow);
++    //     var arrowEl = document.createElement('div');
++    //     arrowEl.innerHTML = arrow;
++    //     el.appendChild(arrowEl);
++    //   }
++    // }
+   };
+ 
+   TooltipHTMLContent.prototype.setEnterable = function (enterable) {
+-    this._enterable = enterable;
++    // this._enterable = enterable;
+   };
+ 
+   TooltipHTMLContent.prototype.getSize = function () {
+-    var el = this.el;
+-    return [el.offsetWidth, el.offsetHeight];
++    // var el = this.el;
++    // return [el.offsetWidth, el.offsetHeight];
+   };
+ 
+   TooltipHTMLContent.prototype.moveTo = function (zrX, zrY) {
+-    var styleCoord = this._styleCoord;
+-    makeStyleCoord(styleCoord, this._zr, this._appendToBody, zrX, zrY);
+-
+-    if (styleCoord[0] != null && styleCoord[1] != null) {
+-      var style_1 = this.el.style;
+-      var transforms = assembleTransform(styleCoord[0], styleCoord[1]);
+-      each(transforms, function (transform) {
+-        style_1[transform[0]] = transform[1];
+-      });
+-    }
++    // var styleCoord = this._styleCoord;
++    // makeStyleCoord(styleCoord, this._zr, this._appendToBody, zrX, zrY);
++
++    // if (styleCoord[0] != null && styleCoord[1] != null) {
++    //   var style_1 = this.el.style;
++    //   var transforms = assembleTransform(styleCoord[0], styleCoord[1]);
++    //   each(transforms, function (transform) {
++    //     style_1[transform[0]] = transform[1];
++    //   });
++    // }
+   };
+   /**
+    * when `alwaysShowContent` is true,
+@@ -405,45 +407,45 @@ function () {
+ 
+ 
+   TooltipHTMLContent.prototype._moveIfResized = function () {
+-    // The ratio of left to width
+-    var ratioX = this._styleCoord[2]; // The ratio of top to height
++    // // The ratio of left to width
++    // var ratioX = this._styleCoord[2]; // The ratio of top to height
+ 
+-    var ratioY = this._styleCoord[3];
+-    this.moveTo(ratioX * this._zr.getWidth(), ratioY * this._zr.getHeight());
++    // var ratioY = this._styleCoord[3];
++    // this.moveTo(ratioX * this._zr.getWidth(), ratioY * this._zr.getHeight());
+   };
+ 
+   TooltipHTMLContent.prototype.hide = function () {
+-    var _this = this;
+-
+-    var style = this.el.style;
+-    style.visibility = 'hidden';
+-    style.opacity = '0';
+-    env.transform3dSupported && (style.willChange = '');
+-    this._show = false;
+-    this._longHideTimeout = setTimeout(function () {
+-      return _this._longHide = true;
+-    }, 500);
++    // var _this = this;
++
++    // var style = this.el.style;
++    // style.visibility = 'hidden';
++    // style.opacity = '0';
++    // env.transform3dSupported && (style.willChange = '');
++    // this._show = false;
++    // this._longHideTimeout = setTimeout(function () {
++    //   return _this._longHide = true;
++    // }, 500);
+   };
+ 
+   TooltipHTMLContent.prototype.hideLater = function (time) {
+-    if (this._show && !(this._inContent && this._enterable) && !this._alwaysShowContent) {
+-      if (time) {
+-        this._hideDelay = time; // Set show false to avoid invoke hideLater multiple times
+-
+-        this._show = false;
+-        this._hideTimeout = setTimeout(bind(this.hide, this), time);
+-      } else {
+-        this.hide();
+-      }
+-    }
++    // if (this._show && !(this._inContent && this._enterable) && !this._alwaysShowContent) {
++    //   if (time) {
++    //     this._hideDelay = time; // Set show false to avoid invoke hideLater multiple times
++
++    //     this._show = false;
++    //     this._hideTimeout = setTimeout(bind(this.hide, this), time);
++    //   } else {
++    //     this.hide();
++    //   }
++    // }
+   };
+ 
+   TooltipHTMLContent.prototype.isShow = function () {
+-    return this._show;
++    // return this._show;
+   };
+ 
+   TooltipHTMLContent.prototype.dispose = function () {
+-    this.el.parentNode.removeChild(this.el);
++    // this.el.parentNode.removeChild(this.el);
+   };
+ 
+   return TooltipHTMLContent;
+diff --git a/node_modules/echarts/lib/model/globalDefault.js b/node_modules/echarts/lib/model/globalDefault.js
+index 4a74287..b7b62df 100644
+--- a/node_modules/echarts/lib/model/globalDefault.js
++++ b/node_modules/echarts/lib/model/globalDefault.js
+@@ -98,7 +98,7 @@ export default {
+     // color: '#000',
+     // decoration: 'none',
+     // PENDING
+-    fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
++    // fontFamily: platform.match(/^Win/) ? 'Microsoft YaHei' : 'sans-serif',
+     // fontFamily: 'Arial, Verdana, sans-serif',
+     fontSize: 12,
+     fontStyle: 'normal',
