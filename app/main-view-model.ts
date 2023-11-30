@@ -48,14 +48,14 @@ export class HelloWorldModel extends Observable {
       },
       xAxis: {
         axisLabel: {
-          show: false
+          show: true
         },
         data: ['shirt','cardign','chiffon shirt','pants','heels','socks'],
       },
       yAxis: {
         axisLabel: {
           // TODO: Same issues here
-          show: false
+          show: true
         }
       },
       series: [{
