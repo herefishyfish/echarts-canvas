@@ -1,5 +1,5 @@
 import { Canvas } from '@nativescript/canvas'
-import { Observable } from '@nativescript/core'
+import { LoadEventData, Observable } from '@nativescript/core'
 import * as echarts from 'echarts'
 
 export class HelloWorldModel extends Observable {
@@ -32,13 +32,16 @@ export class HelloWorldModel extends Observable {
 
   canvasReady(args) {
     console.log('canvasReady');
-    const canvas = args.object;
+    const canvas = args.object as HTMLCanvasElement;
 
-    const ctx = canvas.getContext('2d');
-    const chart = echarts.init(canvas);
+    const chart = echarts.init(canvas as any);
 
     const options = {
       tooltip: {
+        trigger: 'axis',
+        axisPointer: {
+          type: 'cross'
+        }
       },
       legend: {
         // TODO: fix legend spacing
@@ -79,7 +82,9 @@ export class HelloWorldModel extends Observable {
       }
     };
 
-    chart.setOption(options);
+    setTimeout(() => {
+      chart.setOption(options as echarts.EChartOption);
+    }, 1000);
   }
 
   private updateMessage() {
