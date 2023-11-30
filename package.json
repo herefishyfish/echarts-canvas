@@ -3,6 +3,9 @@
   "main": "app/app.ts",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "postinstall": "npx patch-package"
+  },
   "dependencies": {
     "@nativescript/canvas": "2.0.0-alpha.32",
     "@nativescript/canvas-media": "^2.0.0-alpha.32",
