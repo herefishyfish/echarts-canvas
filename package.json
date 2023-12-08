@@ -7,10 +7,10 @@
     "postinstall": "npx patch-package"
   },
   "dependencies": {
-    "@nativescript/canvas": "2.0.0-alpha.32",
-    "@nativescript/canvas-media": "^2.0.0-alpha.32",
-    "@nativescript/canvas-polyfill": "^2.0.0-alpha.32",
-    "@nativescript/canvas-three": "^2.0.0-alpha.32",
+    "@nativescript/canvas": "2.0.0-alpha.34",
+    "@nativescript/canvas-media": "^2.0.0-alpha.34",
+    "@nativescript/canvas-polyfill": "^2.0.0-alpha.34",
+    "@nativescript/canvas-three": "^2.0.0-alpha.34",
     "@nativescript/core": "~8.6.0",
     "@nativescript/theme": "~3.0.2",
     "echarts": "^5.4.3"

@@ -1,0 +1,65 @@
+diff --git a/node_modules/@nativescript/canvas-polyfill/DOM/Element.d.ts b/node_modules/@nativescript/canvas-polyfill/DOM/Element.d.ts
+index 01870b9..f5f2a65 100644
+--- a/node_modules/@nativescript/canvas-polyfill/DOM/Element.d.ts
++++ b/node_modules/@nativescript/canvas-polyfill/DOM/Element.d.ts
+@@ -6,6 +6,7 @@ export declare class Element extends Node {
+     nativeElement: any;
+     private _width;
+     private _height;
++    lang: string;
+     _instance: any;
+     constructor(tagName: any);
+     get classList(): any;
+diff --git a/node_modules/@nativescript/canvas-polyfill/DOM/Element.js b/node_modules/@nativescript/canvas-polyfill/DOM/Element.js
+index 7faf366..fd58146 100644
+--- a/node_modules/@nativescript/canvas-polyfill/DOM/Element.js
++++ b/node_modules/@nativescript/canvas-polyfill/DOM/Element.js
+@@ -21,6 +21,9 @@ export class Element extends Node {
+     get tagName() {
+         return this.nodeName;
+     }
++    get lang() {
++        return 'EN';
++    }
+     getAttribute(key) {
+         return this._instance?.getAttribute?.(key) ?? null;
+     }
+diff --git a/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.d.ts b/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.d.ts
+index 28630a9..2ec2921 100644
+--- a/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.d.ts
++++ b/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.d.ts
+@@ -1,6 +1,7 @@
++import { Canvas } from '@nativescript/canvas';
+ import { Element } from './Element';
+ export declare class HTMLCanvasElement extends Element {
+-    constructor();
++    constructor(c: Canvas);
+     set width(value: any);
+     get width(): any;
+     set height(value: any);
+diff --git a/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.js b/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.js
+index f82474e..78169fc 100644
+--- a/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.js
++++ b/node_modules/@nativescript/canvas-polyfill/DOM/HTMLCanvasElement.js
+@@ -1,16 +1,16 @@
+ import { Canvas } from '@nativescript/canvas';
+ import { Element } from './Element';
+ export class HTMLCanvasElement extends Element {
+-    constructor() {
++    constructor(c) {
+         super('canvas');
+         let canvas = undefined;
+-        if (arguments.length > 1) {
+-            canvas = arguments[1];
+-        }
+-        if (canvas instanceof Canvas) {
++        canvas = c;
++        if (canvas instanceof Canvas || canvas instanceof HTMLCanvasElement) {
++            console.log('canvas is instanceof Canvas');
+             this._canvas = canvas;
+         }
+         else {
++            console.log('canvas is not instanceof Canvas');
+             this._canvas = Canvas.createCustomView(true);
+         }
+     }
