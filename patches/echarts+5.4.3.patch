@@ -103,7 +103,7 @@ diff --git a/node_modules/echarts/lib/component/tooltip/TooltipHTMLContent.js b/
 index 1b17320..603ad2b 100644
 --- a/node_modules/echarts/lib/component/tooltip/TooltipHTMLContent.js
 +++ b/node_modules/echarts/lib/component/tooltip/TooltipHTMLContent.js
-@@ -235,11 +235,11 @@ function () {
+@@ -235,11 +235,12 @@ function () {
      var appendToBody = this._appendToBody = opt && opt.appendToBody;
      makeStyleCoord(this._styleCoord, zr, appendToBody, api.getWidth() / 2, api.getHeight() / 2);
  
@@ -113,6 +113,7 @@ index 1b17320..603ad2b 100644
 -      container.appendChild(el);
 -    }
 +    // if (appendToBody) {
++    console.log('appendToBody');
 +    document.body.appendChild(el);
 +    // } else {
 +    //   container.appendChild(el);

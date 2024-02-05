@@ -5,6 +5,7 @@
     "moduleResolution": "node",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
+    "allowSyntheticDefaultImports": true,
     "noEmitHelpers": true,
     "noEmitOnError": true,
     "skipLibCheck": true,

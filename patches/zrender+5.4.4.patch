@@ -1,0 +1,46 @@
+diff --git a/node_modules/zrender/lib/core/event.js b/node_modules/zrender/lib/core/event.js
+index 176e94f..de9cd1f 100644
+--- a/node_modules/zrender/lib/core/event.js
++++ b/node_modules/zrender/lib/core/event.js
+@@ -7,22 +7,25 @@ var firefoxNotSupportOffsetXY = env.browser.firefox
+     && +env.browser.version.split('.')[0] < 39;
+ export function clientToLocal(el, e, out, calculate) {
+     out = out || {};
+-    if (calculate) {
+-        calculateZrXY(el, e, out);
+-    }
+-    else if (firefoxNotSupportOffsetXY
+-        && e.layerX != null
+-        && e.layerX !== e.offsetX) {
+-        out.zrX = e.layerX;
+-        out.zrY = e.layerY;
+-    }
+-    else if (e.offsetX != null) {
+-        out.zrX = e.offsetX;
+-        out.zrY = e.offsetY;
+-    }
+-    else {
+-        calculateZrXY(el, e, out);
+-    }
++    // console.log('clientToLocal', calculate, firefoxNotSupportOffsetXY);
++    // if (calculate) {
++    //     calculateZrXY(el, e, out);
++    // }
++    // else if (firefoxNotSupportOffsetXY
++    //     && e.layerX != null
++    //     && e.layerX !== e.offsetX) {
++    //     out.zrX = e.layerX;
++    //     out.zrY = e.layerY;
++    // }
++    // else if (e.offsetX != null) {
++        // out.zrX = e.offsetX;
++        // out.zrY = e.offsetY;
++    // }
++    // else {
++    //     calculateZrXY(el, e, out);
++    // }
++    out.zrX = e.clientX;
++    out.zrY = e.clientY;
+     return out;
+ }
+ function calculateZrXY(el, e, out) {

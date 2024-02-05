@@ -7,21 +7,20 @@
     "postinstall": "npx patch-package"
   },
   "dependencies": {
-    "@nativescript/canvas": "2.0.0-alpha.46",
-    "@nativescript/canvas-media": "2.0.0-alpha.46",
-    "@nativescript/canvas-polyfill": "2.0.0-alpha.46",
-    "@nativescript/canvas-three": "2.0.0-alpha.46",
+    "@nativescript/canvas": "2.0.0-beta.4",
+    "@nativescript/canvas-media": "2.0.0-beta.4",
+    "@nativescript/canvas-polyfill": "2.0.0-beta.4",
+    "@nativescript/canvas-three": "2.0.0-beta.4",
     "@nativescript/core": "~8.6.0",
     "@nativescript/theme": "~3.0.2",
     "echarts": "^5.4.3"
   },
   "devDependencies": {
-    "@nativescript/android": "next",
+    "@nativescript/android": "~8.6.0",
     "@nativescript/ios": "~8.6.0",
     "@nativescript/preview-cli": "1.0.12",
     "@nativescript/types": "~8.6.0",
     "@nativescript/webpack": "~5.0.18",
-    "@types/echarts": "^4.9.22",
     "typescript": "~5.2.0"
   }
 }

@@ -1,13 +1,20 @@
 import { Canvas } from "@nativescript/canvas";
 import { HTMLCanvasElement as NSHTMLCanvasElement } from "@nativescript/canvas-polyfill/DOM/HTMLCanvasElement";
-import { LoadEventData, Observable, Screen, StackLayout } from "@nativescript/core";
-import * as echarts from "echarts";
+import * as zrender from "zrender";
+import {
+  LoadEventData,
+  Observable,
+  Screen,
+  StackLayout,
+} from "@nativescript/core";
+import { init, EChartsOption, graphic, util } from "echarts";
+import { data } from "./data/life-expectancy-table";
 
-echarts.setPlatformAPI({
-  createCanvas() {
-    return new NSHTMLCanvasElement(null) as any;
-  },
-});
+// echarts.setPlatformAPI({
+//   createCanvas() {
+//     return document.createElement("canvas");
+//   },
+// });
 
 export class HelloWorldModel extends Observable {
   private _counter: number;
@@ -37,12 +44,38 @@ export class HelloWorldModel extends Observable {
     this.updateMessage();
   }
 
+  zRenderCanvasReady(args: LoadEventData) {
+    const canvas = args.object as Canvas;
+
+    const zr = zrender.init(canvas as any);
+
+    var circle = new zrender.Circle({
+      shape: {
+        cx: 150,
+        cy: 50,
+        r: 40,
+      },
+      style: {
+        fill: "none",
+        stroke: "#F00",
+      },
+    });
+    zr.add(circle);
+
+    zr.on(
+      "mousemove",
+      function (e) {
+        console.log("click", e);
+      },
+      this
+    );
+  }
+
   canvasReady(args: LoadEventData) {
     console.log("canvasReady");
     const canvas = args.object as Canvas;
     // canvas.ignorePixelScaling = true;
     // canvas.ignoreTouchEvents = false;
-    const _canvas = new NSHTMLCanvasElement(canvas as any);
     // console.log(_canvas)
 
     // const ctx = _canvas.getContext("2d", {});
@@ -51,8 +84,8 @@ export class HelloWorldModel extends Observable {
 
     // return;
 
-    const chart = echarts.init(_canvas as unknown as HTMLCanvasElement);
-    let option: echarts.EChartOption;
+    const chart = init(canvas as unknown as HTMLCanvasElement);
+    let option: EChartsOption;
 
     option = {
       graphic: {
@@ -102,19 +135,10 @@ export class HelloWorldModel extends Observable {
   canvasReady5(args: LoadEventData) {
     console.log("canvasReady");
     const canvas = args.object as Canvas;
-    canvas.ignorePixelScaling = true;
-    // canvas.ignoreTouchEvents = false;
-    const _canvas = new NSHTMLCanvasElement(canvas as any);
-    // console.log(_canvas)
+    // canvas.ignorePixelScaling = true;
 
-    // const ctx = _canvas.getContext("2d", {});
-    // ctx.fillStyle = "";
-    // ctx.fillRect(0, 0, 150, 75);
-
-    // return;
-
-    const chart = echarts.init(_canvas as unknown as HTMLCanvasElement);
-    let option: echarts.EChartOption;
+    const chart = init(canvas as any, "dark");
+    let option: EChartsOption;
 
     const symbolSize = 20;
     const data: any = [
@@ -122,85 +146,85 @@ export class HelloWorldModel extends Observable {
       [-30, -5],
       [-76.5, 20],
       [-63.5, 40],
-      [-22.1, 50]
+      [-22.1, 50],
     ];
     option = {
       title: {
-        text: 'Try Dragging these Points',
-        left: 'center'
+        text: "Try Dragging these Points",
+        left: "center",
       },
       tooltip: {
-        triggerOn: 'none',
+        triggerOn: "none",
         formatter: function (params) {
           return (
-            '<StackLayout>' +
-            'X: ' +
-            params.data[0].toFixed(2) +
-            // '<br>Y: ' +
-            params.data[1].toFixed(2) + 
-            '</StackLayout>'
+            "<StackLayout>" +
+            "<Label>X: 123</Label>" +
+            // params.data[0].toFixed(2) +
+            // // '<br>Y: ' +
+            // params.data[1].toFixed(2) +
+            "</StackLayout>"
           );
-        }
+        },
       },
       grid: {
-        top: '8%',
-        bottom: '12%'
+        top: "8%",
+        bottom: "12%",
       },
       xAxis: {
         min: -100,
         max: 70,
-        type: 'value',
-        axisLine: { onZero: false }
+        type: "value",
+        axisLine: { onZero: false },
       },
       yAxis: {
         min: -30,
         max: 60,
-        type: 'value',
-        axisLine: { onZero: false }
+        type: "value",
+        axisLine: { onZero: false },
       },
       dataZoom: [
         {
-          type: 'slider',
+          type: "slider",
           xAxisIndex: 0,
-          filterMode: 'none'
+          filterMode: "none",
         },
         {
-          type: 'slider',
+          type: "slider",
           yAxisIndex: 0,
-          filterMode: 'none'
+          filterMode: "none",
         },
         {
-          type: 'inside',
+          type: "inside",
           xAxisIndex: 0,
-          filterMode: 'none'
+          filterMode: "none",
         },
         {
-          type: 'inside',
+          type: "inside",
           yAxisIndex: 0,
-          filterMode: 'none'
-        }
+          filterMode: "none",
+        },
       ],
       series: [
         {
-          id: 'a',
-          type: 'line',
+          id: "a",
+          type: "line",
           smooth: true,
           symbolSize: symbolSize,
-          data: data
-        }
-      ]
+          data: data,
+        },
+      ],
     };
     setTimeout(function () {
       // Add shadow circles (which is not visible) to enable drag.
       chart.setOption({
         graphic: data.map(function (item, dataIndex) {
           return {
-            type: 'circle',
-            position: chart.convertToPixel('grid', item),
+            type: "circle",
+            position: chart.convertToPixel("grid", item),
             shape: {
               cx: 0,
               cy: 0,
-              r: symbolSize / 2
+              r: symbolSize / 2,
             },
             invisible: true,
             draggable: true,
@@ -211,46 +235,54 @@ export class HelloWorldModel extends Observable {
               showTooltip(dataIndex);
             },
             onmouseout: function () {
+              // console.log("onmouseout");
               hideTooltip(dataIndex);
             },
-            z: 100
+            ontouchstart: function () {
+              // console.log("ontouchstart");
+              showTooltip(dataIndex);
+            },
+            z: 100,
           };
-        })
+        }),
       });
     }, 0);
-    window.addEventListener('resize', updatePosition);
-    chart.on('dataZoom', updatePosition);
+    window.addEventListener("resize", updatePosition);
+    chart.on("dataZoom", updatePosition);
+    // chart.on("mousedown", function (params) {
+    //   console.log("mousemove");
+    // });
     function updatePosition() {
       chart.setOption({
         graphic: data.map(function (item, dataIndex) {
           return {
-            position: chart.convertToPixel('grid', item)
+            position: chart.convertToPixel("grid", item),
           };
-        })
+        }),
       });
     }
     function showTooltip(dataIndex) {
       chart.dispatchAction({
-        type: 'showTip',
+        type: "showTip",
         seriesIndex: 0,
-        dataIndex: dataIndex
+        dataIndex: dataIndex,
       });
     }
     function hideTooltip(dataIndex) {
       chart.dispatchAction({
-        type: 'hideTip'
+        type: "hideTip",
       });
     }
     function onPointDragging(dataIndex, pos) {
-      data[dataIndex] = chart.convertFromPixel('grid', pos);
+      data[dataIndex] = chart.convertFromPixel("grid" as any, pos);
       // Update data
       chart.setOption({
         series: [
           {
-            id: 'a',
-            data: data
-          }
-        ]
+            id: "a",
+            data: data,
+          },
+        ],
       });
     }
 
@@ -259,13 +291,13 @@ export class HelloWorldModel extends Observable {
 
   canvasReady2(args) {
     const canvas = args.object as Canvas;
-    canvas.ignorePixelScaling = true;
-    const _canvas = new NSHTMLCanvasElement(canvas as any);
+    // canvas.ignorePixelScaling = true;
 
-    const chart = echarts.init(_canvas as unknown as HTMLCanvasElement);
-    let option: any;
+    const chart = init(canvas as unknown as HTMLCanvasElement);
+    let option: EChartsOption;
 
     option = {
+      darkMode: true,
       tooltip: {
         trigger: "item",
       },
@@ -312,12 +344,392 @@ export class HelloWorldModel extends Observable {
     chart.setOption(option);
   }
 
-  canvasReady3(args) {
+  canvasReady7(args) {
     const canvas = args.object as Canvas;
     canvas.ignorePixelScaling = true;
+
+    const chart = init(canvas as unknown as HTMLCanvasElement, "", {
+      useDirtyRect: true,
+    });
+
+    const schema = [
+      { name: "AQIindex", index: 1, text: "AQI" },
+      { name: "PM25", index: 2, text: "PM 2.5" },
+      { name: "PM10", index: 3, text: "PM 10" },
+      { name: "CO", index: 4, text: "CO" },
+      { name: "NO2", index: 5, text: "NO₂" },
+      { name: "SO2", index: 6, text: "SO₂" },
+      { name: "Rank", index: 7, text: "Rank" },
+    ];
+    const rawData = [
+      [55, 9, 56, 0.46, 18, 6, "Good", "Beijing"],
+      [25, 11, 21, 0.65, 34, 9, "Excellent", "Beijing"],
+      [56, 7, 63, 0.3, 14, 5, "Good", "Beijing"],
+      [33, 7, 29, 0.33, 16, 6, "Excellent", "Beijing"],
+      [42, 24, 44, 0.76, 40, 16, "Excellent", "Beijing"],
+      [82, 58, 90, 1.77, 68, 33, "Good", "Beijing"],
+      [74, 49, 77, 1.46, 48, 27, "Good", "Beijing"],
+      [78, 55, 80, 1.29, 59, 29, "Good", "Beijing"],
+      [267, 216, 280, 4.8, 108, 64, "Severe", "Beijing"],
+      [185, 127, 216, 2.52, 61, 27, "Moderate", "Beijing"],
+      [39, 19, 38, 0.57, 31, 15, "Excellent", "Beijing"],
+      [41, 11, 40, 0.43, 21, 7, "Excellent", "Beijing"],
+      [64, 38, 74, 1.04, 46, 22, "Good", "Beijing"],
+      [108, 79, 120, 1.7, 75, 41, "Mild", "Beijing"],
+      [108, 63, 116, 1.48, 44, 26, "Mild", "Beijing"],
+      [33, 6, 29, 0.34, 13, 5, "Excellent", "Beijing"],
+      [94, 66, 110, 1.54, 62, 31, "Good", "Beijing"],
+      [186, 142, 192, 3.88, 93, 79, "Moderate", "Beijing"],
+      [57, 31, 54, 0.96, 32, 14, "Good", "Beijing"],
+      [22, 8, 17, 0.48, 23, 10, "Excellent", "Beijing"],
+      [39, 15, 36, 0.61, 29, 13, "Excellent", "Beijing"],
+      [94, 69, 114, 2.08, 73, 39, "Good", "Beijing"],
+      [99, 73, 110, 2.43, 76, 48, "Good", "Beijing"],
+      [31, 12, 30, 0.5, 32, 16, "Excellent", "Beijing"],
+      [42, 27, 43, 1, 53, 22, "Excellent", "Beijing"],
+      [154, 117, 157, 3.05, 92, 58, "Moderate", "Beijing"],
+      [234, 185, 230, 4.09, 123, 69, "Severe", "Beijing"],
+      [160, 120, 186, 2.77, 91, 50, "Moderate", "Beijing"],
+      [134, 96, 165, 2.76, 83, 41, "Mild", "Beijing"],
+      [52, 24, 60, 1.03, 50, 21, "Good", "Beijing"],
+      [46, 5, 49, 0.28, 10, 6, "Excellent", "Beijing"],
+      [26, 37, 27, 1.163, 27, 13, "Excellent", "Guangzhou"],
+      [85, 62, 71, 1.195, 60, 8, "Good", "Guangzhou"],
+      [78, 38, 74, 1.363, 37, 7, "Good", "Guangzhou"],
+      [21, 21, 36, 0.634, 40, 9, "Excellent", "Guangzhou"],
+      [41, 42, 46, 0.915, 81, 13, "Excellent", "Guangzhou"],
+      [56, 52, 69, 1.067, 92, 16, "Good", "Guangzhou"],
+      [64, 30, 28, 0.924, 51, 2, "Good", "Guangzhou"],
+      [55, 48, 74, 1.236, 75, 26, "Good", "Guangzhou"],
+      [76, 85, 113, 1.237, 114, 27, "Good", "Guangzhou"],
+      [91, 81, 104, 1.041, 56, 40, "Good", "Guangzhou"],
+      [84, 39, 60, 0.964, 25, 11, "Good", "Guangzhou"],
+      [64, 51, 101, 0.862, 58, 23, "Good", "Guangzhou"],
+      [70, 69, 120, 1.198, 65, 36, "Good", "Guangzhou"],
+      [77, 105, 178, 2.549, 64, 16, "Good", "Guangzhou"],
+      [109, 68, 87, 0.996, 74, 29, "Mild", "Guangzhou"],
+      [73, 68, 97, 0.905, 51, 34, "Good", "Guangzhou"],
+      [54, 27, 47, 0.592, 53, 12, "Good", "Guangzhou"],
+      [51, 61, 97, 0.811, 65, 19, "Good", "Guangzhou"],
+      [91, 71, 121, 1.374, 43, 18, "Good", "Guangzhou"],
+      [73, 102, 182, 2.787, 44, 19, "Good", "Guangzhou"],
+      [73, 50, 76, 0.717, 31, 20, "Good", "Guangzhou"],
+      [84, 94, 140, 2.238, 68, 18, "Good", "Guangzhou"],
+      [93, 77, 104, 1.165, 53, 7, "Good", "Guangzhou"],
+      [99, 130, 227, 3.97, 55, 15, "Good", "Guangzhou"],
+      [146, 84, 139, 1.094, 40, 17, "Mild", "Guangzhou"],
+      [113, 108, 137, 1.481, 48, 15, "Mild", "Guangzhou"],
+      [81, 48, 62, 1.619, 26, 3, "Good", "Guangzhou"],
+      [56, 48, 68, 1.336, 37, 9, "Good", "Guangzhou"],
+      [82, 92, 174, 3.29, 0, 13, "Good", "Guangzhou"],
+      [106, 116, 188, 3.628, 101, 16, "Mild", "Guangzhou"],
+      [118, 50, 0, 1.383, 76, 11, "Mild", "Guangzhou"],
+      [91, 45, 125, 0.82, 34, 23, "Good", "Shanghai"],
+      [65, 27, 78, 0.86, 45, 29, "Good", "Shanghai"],
+      [83, 60, 84, 1.09, 73, 27, "Good", "Shanghai"],
+      [109, 81, 121, 1.28, 68, 51, "Mild", "Shanghai"],
+      [106, 77, 114, 1.07, 55, 51, "Mild", "Shanghai"],
+      [109, 81, 121, 1.28, 68, 51, "Mild", "Shanghai"],
+      [106, 77, 114, 1.07, 55, 51, "Mild", "Shanghai"],
+      [89, 65, 78, 0.86, 51, 26, "Good", "Shanghai"],
+      [53, 33, 47, 0.64, 50, 17, "Good", "Shanghai"],
+      [80, 55, 80, 1.01, 75, 24, "Good", "Shanghai"],
+      [117, 81, 124, 1.03, 45, 24, "Mild", "Shanghai"],
+      [99, 71, 142, 1.1, 62, 42, "Good", "Shanghai"],
+      [95, 69, 130, 1.28, 74, 50, "Good", "Shanghai"],
+      [116, 87, 131, 1.47, 84, 40, "Mild", "Shanghai"],
+      [108, 80, 121, 1.3, 85, 37, "Mild", "Shanghai"],
+      [134, 83, 167, 1.16, 57, 43, "Mild", "Shanghai"],
+      [79, 43, 107, 1.05, 59, 37, "Good", "Shanghai"],
+      [71, 46, 89, 0.86, 64, 25, "Good", "Shanghai"],
+      [97, 71, 113, 1.17, 88, 31, "Good", "Shanghai"],
+      [84, 57, 91, 0.85, 55, 31, "Good", "Shanghai"],
+      [87, 63, 101, 0.9, 56, 41, "Good", "Shanghai"],
+      [104, 77, 119, 1.09, 73, 48, "Mild", "Shanghai"],
+      [87, 62, 100, 1, 72, 28, "Good", "Shanghai"],
+      [168, 128, 172, 1.49, 97, 56, "Moderate", "Shanghai"],
+      [65, 45, 51, 0.74, 39, 17, "Good", "Shanghai"],
+      [39, 24, 38, 0.61, 47, 17, "Excellent", "Shanghai"],
+      [39, 24, 39, 0.59, 50, 19, "Excellent", "Shanghai"],
+      [93, 68, 96, 1.05, 79, 29, "Good", "Shanghai"],
+      [188, 143, 197, 1.66, 99, 51, "Moderate", "Shanghai"],
+      [174, 131, 174, 1.55, 108, 50, "Moderate", "Shanghai"],
+      [187, 143, 201, 1.39, 89, 53, "Moderate", "Shanghai"],
+    ];
+    const CATEGORY_DIM_COUNT = 6;
+    const GAP = 2;
+    const BASE_LEFT = 5;
+    const BASE_TOP = 10;
+    // const GRID_WIDTH = 220;
+    // const GRID_HEIGHT = 220;
+    const GRID_WIDTH = (100 - BASE_LEFT - GAP) / CATEGORY_DIM_COUNT - GAP;
+    const GRID_HEIGHT = (100 - BASE_TOP - GAP) / CATEGORY_DIM_COUNT - GAP;
+    const CATEGORY_DIM = 7;
+    const SYMBOL_SIZE = 4;
+    function retrieveScatterData(data, dimX, dimY) {
+      let result = [];
+      for (let i = 0; i < data.length; i++) {
+        let item = [data[i][dimX], data[i][dimY]];
+        item[CATEGORY_DIM] = data[i][CATEGORY_DIM];
+        result.push(item);
+      }
+      return result;
+    }
+    function generateGrids() {
+      let index = 0;
+      const grid = [];
+      const xAxis = [];
+      const yAxis = [];
+      const series = [];
+      for (let i = 0; i < CATEGORY_DIM_COUNT; i++) {
+        for (let j = 0; j < CATEGORY_DIM_COUNT; j++) {
+          if (CATEGORY_DIM_COUNT - i + j >= CATEGORY_DIM_COUNT) {
+            continue;
+          }
+          grid.push({
+            left: BASE_LEFT + i * (GRID_WIDTH + GAP) + "%",
+            top: BASE_TOP + j * (GRID_HEIGHT + GAP) + "%",
+            width: GRID_WIDTH + "%",
+            height: GRID_HEIGHT + "%",
+          });
+          xAxis.push({
+            splitNumber: 3,
+            position: "top",
+            axisLine: {
+              show: j === 0,
+              onZero: false,
+            },
+            axisTick: {
+              show: j === 0,
+              inside: true,
+            },
+            axisLabel: {
+              show: j === 0,
+            },
+            type: "value",
+            gridIndex: index,
+            scale: true,
+          });
+          yAxis.push({
+            splitNumber: 3,
+            position: "right",
+            axisLine: {
+              show: i === CATEGORY_DIM_COUNT - 1,
+              onZero: false,
+            },
+            axisTick: {
+              show: i === CATEGORY_DIM_COUNT - 1,
+              inside: true,
+            },
+            axisLabel: {
+              show: i === CATEGORY_DIM_COUNT - 1,
+            },
+            type: "value",
+            gridIndex: index,
+            scale: true,
+          });
+          series.push({
+            type: "scatter",
+            symbolSize: SYMBOL_SIZE,
+            xAxisIndex: index,
+            yAxisIndex: index,
+            data: retrieveScatterData(rawData, i, j),
+          });
+          index++;
+        }
+      }
+      return {
+        grid,
+        xAxis,
+        yAxis,
+        series,
+      };
+    }
+    const gridOption = generateGrids();
+    const option = {
+      animation: false,
+      brush: {
+        brushLink: "all",
+        xAxisIndex: gridOption.xAxis.map(function (_, idx) {
+          return idx;
+        }),
+        yAxisIndex: gridOption.yAxis.map(function (_, idx) {
+          return idx;
+        }),
+        inBrush: {
+          opacity: 1,
+        },
+      },
+      visualMap: {
+        type: "piecewise",
+        categories: ["Beijing", "Shanghai", "Guangzhou"],
+        dimension: CATEGORY_DIM,
+        orient: "horizontal",
+        top: 0,
+        left: "center",
+        inRange: {
+          color: ["#51689b", "#ce5c5c", "#fbc357"],
+        },
+        outOfRange: {
+          color: "#ddd",
+        },
+        seriesIndex: gridOption.series.map(function (_, idx) {
+          return idx;
+        }),
+      },
+      tooltip: {
+        trigger: "item",
+      },
+      parallelAxis: [
+        { dim: 0, name: schema[0].text },
+        { dim: 1, name: schema[1].text },
+        { dim: 2, name: schema[2].text },
+        { dim: 3, name: schema[3].text },
+        { dim: 4, name: schema[4].text },
+        { dim: 5, name: schema[5].text },
+        {
+          dim: 6,
+          name: schema[6].text,
+          type: "category",
+          data: ["Excellent", "Good", "Mild", "Moderate", "Severe", "Serious"],
+        },
+      ],
+      parallel: {
+        bottom: "5%",
+        left: "2%",
+        height: "30%",
+        width: "55%",
+        parallelAxisDefault: {
+          type: "value",
+          name: "AQI index",
+          nameLocation: "end",
+          nameGap: 20,
+          splitNumber: 3,
+          nameTextStyle: {
+            fontSize: 14,
+          },
+          axisLine: {
+            lineStyle: {
+              color: "#555",
+            },
+          },
+          axisTick: {
+            lineStyle: {
+              color: "#555",
+            },
+          },
+          splitLine: {
+            show: false,
+          },
+          axisLabel: {
+            color: "#555",
+          },
+        },
+      },
+      xAxis: gridOption.xAxis,
+      yAxis: gridOption.yAxis,
+      grid: gridOption.grid,
+      series: [
+        {
+          name: "parallel",
+          type: "parallel",
+          smooth: true,
+          lineStyle: {
+            width: 1,
+            opacity: 0.3,
+          },
+          data: rawData,
+        },
+        ...gridOption.series,
+      ],
+    };
+
+    chart.setOption(option);
+  }
+
+  canvasReady6(args) {
+    const canvas = args.object as Canvas;
+    canvas.ignorePixelScaling = true;
+
+    const chart = init(canvas as unknown as HTMLCanvasElement);
+
+    let option: any;
+    let base = +new Date(1968, 9, 3);
+    let oneDay = 24 * 3600 * 1000;
+    let date = [];
+    let data = [Math.random() * 300];
+    for (let i = 1; i < 20000; i++) {
+      var now = new Date((base += oneDay));
+      date.push(
+        [now.getFullYear(), now.getMonth() + 1, now.getDate()].join("/")
+      );
+      data.push(Math.round((Math.random() - 0.5) * 20 + data[i - 1]));
+    }
+    option = {
+      tooltip: {
+        trigger: "axis",
+        position: function (pt) {
+          return [pt[0], "10%"];
+        },
+      },
+      title: {
+        left: "center",
+        text: "Large Area Chart",
+      },
+      xAxis: {
+        type: "category",
+        boundaryGap: false,
+        data: date,
+      },
+      yAxis: {
+        type: "value",
+        boundaryGap: [0, "100%"],
+      },
+      dataZoom: [
+        {
+          type: "inside",
+          start: 0,
+          end: 10,
+        },
+        {
+          start: 0,
+          end: 10,
+        },
+      ],
+      series: [
+        {
+          name: "Fake Data",
+          type: "line",
+          symbol: "none",
+          sampling: "lttb",
+          itemStyle: {
+            color: "rgb(255, 70, 131)",
+          },
+          areaStyle: {
+            color: new graphic.LinearGradient(0, 0, 0, 1, [
+              {
+                offset: 0,
+                color: "rgb(255, 158, 68)",
+              },
+              {
+                offset: 1,
+                color: "rgb(255, 70, 131)",
+              },
+            ]),
+          },
+          data: data,
+        },
+      ],
+    };
+
+    chart.setOption(option);
+  }
+
+  canvasReady3(args) {
+    const canvas = args.object as Canvas;
+    // canvas.ignorePixelScaling = true;
     // canvas.upscaleProperty = false;
-    const _canvas = new NSHTMLCanvasElement(canvas as any);
-    const chart = echarts.init(_canvas as unknown as HTMLCanvasElement);
+    const chart = init(canvas as unknown as HTMLCanvasElement);
 
     let option: any;
 
@@ -511,8 +923,7 @@ export class HelloWorldModel extends Observable {
     const canvas = args.object as Canvas;
     // canvas.ignorePixelScaling = true;
     // canvas.upscaleProperty = false;
-    const _canvas = new NSHTMLCanvasElement(canvas as any);
-    const ctx = _canvas.getContext("2d", {});
+    const ctx = canvas.getContext("2d", {});
 
     // swap between dips and pixels to see the difference
     const dips = Screen.mainScreen.scale;
@@ -527,6 +938,104 @@ export class HelloWorldModel extends Observable {
     ctx.beginPath();
     ctx.arc(160 * dips, 60 * dips, 50 * dips, 0, Math.PI * 2);
     ctx.fill();
+  }
+
+  canvasReady8(args) {
+    console.log('canvas ready 8!')
+    const canvas = args.object as Canvas;
+    // canvas.ignorePixelScaling = true;
+    canvas.upscaleProperty = false;
+    const chart = init(canvas as unknown as HTMLCanvasElement);
+    
+    function setData(_rawData) {
+      // console.log(_rawData);
+      // var countries = ['Australia', 'Canada', 'China', 'Cuba', 'Finland', 'France', 'Germany', 'Iceland', 'India', 'Japan', 'North Korea', 'South Korea', 'New Zealand', 'Norway', 'Poland', 'Russia', 'Turkey', 'United Kingdom', 'United States'];
+      const countries = [
+        "Finland",
+        "Australia",
+        "France",
+        "Germany",
+        "Iceland",
+        "Norway",
+        "Poland",
+        "Russia",
+        "United Kingdom",
+      ];
+      const datasetWithFilters = [];
+      const seriesList = [];
+      util.each(countries, function (country) {
+        var datasetId = "dataset_" + country;
+        datasetWithFilters.push({
+          id: datasetId,
+          fromDatasetId: "dataset_raw",
+          transform: {
+            type: "filter",
+            config: {
+              and: [
+                { dimension: "Year", gte: 1950 },
+                { dimension: "Country", "=": country },
+              ],
+            },
+          },
+        });
+        seriesList.push({
+          type: "line",
+          datasetId: datasetId,
+          showSymbol: false,
+          name: country,
+          endLabel: {
+            show: true,
+            formatter: function (params) {
+              return params.value[3] + ": " + params.value[0];
+            },
+          },
+          labelLayout: {
+            moveOverlap: "shiftY",
+          },
+          emphasis: {
+            focus: "series",
+          },
+          encode: {
+            x: "Year",
+            y: "Income",
+            label: ["Country", "Income"],
+            itemName: "Year",
+            tooltip: ["Income"],
+          },
+        });
+      });
+      const option = {
+        animationDuration: 10000,
+        dataset: [
+          {
+            id: "dataset_raw",
+            source: _rawData,
+          },
+          ...datasetWithFilters,
+        ],
+        title: {
+          text: "Income of Germany and France since 1950",
+        },
+        tooltip: {
+          order: "valueDesc",
+          trigger: "axis",
+        },
+        xAxis: {
+          type: "category",
+          nameLocation: "middle",
+        },
+        yAxis: {
+          name: "Income",
+        },
+        grid: {
+          right: 140,
+        },
+        series: seriesList,
+      };
+      chart.setOption(option);
+    }
+
+    setData(data);
   }
 
   private updateMessage() {

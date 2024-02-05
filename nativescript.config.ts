@@ -5,7 +5,7 @@ export default {
   appPath: 'app',
   appResourcesPath: 'App_Resources',
   android: {
-    v8Flags: '--expose_gc',
+    v8Flags: '--expose_gc --allow-natives-syntax --turbo-fast-api-calls',
     markingMode: 'none'
   }
 } as NativeScriptConfig;
