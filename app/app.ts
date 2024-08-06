@@ -5,7 +5,7 @@ purpose of the file is to pass control to the app’s first module.
 */
 
 import { Application, Screen, Utils } from '@nativescript/core'
-// import '@nativescript/canvas-polyfill';
+import '@nativescript/canvas-polyfill';
 
 // declare const jp: any;
 

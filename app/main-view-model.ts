@@ -13,11 +13,11 @@ import { data } from "./data/life-expectancy-table";
 // global.devicePixelRatio = 4;
 // globalThis.devicePixelRatio = 4;
 
-// setPlatformAPI({
-//   createCanvas() {
-//     return document.createElement("canvas");
-//   },
-// });
+setPlatformAPI({
+  createCanvas() {
+    return document.createElement("canvas");
+  },
+});
 
 export class HelloWorldModel extends Observable {
   private _counter: number;
