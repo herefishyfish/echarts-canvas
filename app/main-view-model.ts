@@ -13,11 +13,11 @@ import { data } from "./data/life-expectancy-table";
 // global.devicePixelRatio = 4;
 // globalThis.devicePixelRatio = 4;
 
-setPlatformAPI({
-  createCanvas() {
-    return document.createElement("canvas");
-  },
-});
+// setPlatformAPI({
+//   createCanvas() {
+//     return document.createElement("canvas");
+//   },
+// });
 
 export class HelloWorldModel extends Observable {
   private _counter: number;
@@ -88,7 +88,7 @@ export class HelloWorldModel extends Observable {
     // return;
 
     const chart = init(canvas as unknown as HTMLCanvasElement, null, {
-      devicePixelRatio: 10,
+      devicePixelRatio: Screen.mainScreen.scale,
       width: Screen.mainScreen.widthDIPs,
       height: Screen.mainScreen.heightDIPs,
     });
@@ -140,11 +140,15 @@ export class HelloWorldModel extends Observable {
   }
 
   canvasReady5(args: LoadEventData) {
-    console.log("canvasReady");
+    console.log("canvasReady25");
     const canvas = args.object as Canvas;
     // canvas.ignorePixelScaling = true;
 
-    const chart = init(canvas as any, "dark");
+    const chart = init(canvas as any, "dark", {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+    });
     let option: EChartsOption;
 
     const symbolSize = 20;
@@ -669,7 +673,6 @@ export class HelloWorldModel extends Observable {
       devicePixelRatio: Screen.mainScreen.scale,
       width: Screen.mainScreen.widthDIPs,
       height: Screen.mainScreen.heightDIPs,
-      useCoarsePointer: true,
     });
 
     let option: any;
@@ -747,10 +750,8 @@ export class HelloWorldModel extends Observable {
   canvasReady3(args) {
     const canvas = args.object as Canvas;
     const chart = init(canvas as unknown as HTMLCanvasElement, null, {
-      devicePixelRatio: Screen.mainScreen.scale,
       width: Screen.mainScreen.widthDIPs,
       height: Screen.mainScreen.heightDIPs,
-      useCoarsePointer: true,
     });
 
     let option: any;
@@ -972,22 +973,24 @@ export class HelloWorldModel extends Observable {
   canvasReady8(args) {
     console.log("canvas ready 8!");
     const canvas = args.object as NSHTMLCanvasElement;
-    canvas.getBoundingClientRect = () => {
-      return {
-        left: 0,
-        top: 0,
-        right: 392.72727272727275,
-        bottom: 850.9090909090909,
-        x: 0,
-        y: 0,
-        width: 392.72727272727275,
-        height: 850.9090909090909,
-      };
-    };
+    // canvas.getBoundingClientRect = () => {
+    //   return {
+    //     left: 0,
+    //     top: 0,
+    //     right: 392.72727272727275,
+    //     bottom: 850.9090909090909,
+    //     x: 0,
+    //     y: 0,
+    //     width: 392.72727272727275,
+    //     height: 850.9090909090909,
+    //   };
+    // };
 
     console.log(global.devicePixelRatio);
     const chart = init(canvas as unknown as HTMLCanvasElement, null, {
-      // renderer: 'svg'
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+      devicePixelRatio: Screen.mainScreen.scale,
     });
 
     function setData(_rawData) {
@@ -1072,6 +1075,7 @@ export class HelloWorldModel extends Observable {
         },
         grid: {
           right: 140,
+          left: 51,
         },
         series: seriesList,
       };

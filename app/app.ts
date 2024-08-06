@@ -7,11 +7,11 @@ purpose of the file is to pass control to the app’s first module.
 import { Application, Screen, Utils } from '@nativescript/core'
 import '@nativescript/canvas-polyfill';
 
-// declare const jp: any;
+declare const jp: any;
 
-// if (global.isAndroid) {
-//   jp.wasabeef.takt.Takt.stock(Utils.android.getApplicationContext()).seat(jp.wasabeef.takt.Seat.TOP_CENTER).color(-65536);
-// }
+if (global.isAndroid) {
+  jp.wasabeef.takt.Takt.stock(Utils.android.getApplicationContext()).seat(jp.wasabeef.takt.Seat.TOP_CENTER).color(-65536);
+}
 
 Application.run({ moduleName: 'app-root' })
 

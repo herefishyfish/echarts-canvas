@@ -4,7 +4,7 @@
 
     <GridLayout rows="*">
         <!-- <Label text="hello" /> -->
-        <canvas:Canvas style="width:100%; height:100%;" ready="{{canvasReady3}}"/>
+        <canvas:Canvas style="width:100%; height:100%;" ready="{{canvasReady5}}"/>
         <!-- <canvas:Canvas row="1" width="100%" height="100%" ready="{{canvasReady3}}"/>  -->
         <!-- <canvas:Canvas row="2" width="100%" height="100%" ready="{{canvasReady2}}"/> -->
         <!-- <canvas:Canvas row="3" ready="{{canvasReady9}}"/> -->
