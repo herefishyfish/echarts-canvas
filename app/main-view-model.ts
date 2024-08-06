@@ -7,10 +7,13 @@ import {
   Screen,
   StackLayout,
 } from "@nativescript/core";
-import { init, EChartsOption, graphic, util } from "echarts";
+import { init, EChartsOption, graphic, util, setPlatformAPI } from "echarts";
 import { data } from "./data/life-expectancy-table";
 
-// echarts.setPlatformAPI({
+// global.devicePixelRatio = 4;
+// globalThis.devicePixelRatio = 4;
+
+// setPlatformAPI({
 //   createCanvas() {
 //     return document.createElement("canvas");
 //   },
@@ -84,7 +87,11 @@ export class HelloWorldModel extends Observable {
 
     // return;
 
-    const chart = init(canvas as unknown as HTMLCanvasElement);
+    const chart = init(canvas as unknown as HTMLCanvasElement, null, {
+      devicePixelRatio: 10,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+    });
     let option: EChartsOption;
 
     option = {
@@ -293,7 +300,11 @@ export class HelloWorldModel extends Observable {
     const canvas = args.object as Canvas;
     // canvas.ignorePixelScaling = true;
 
-    const chart = init(canvas as unknown as HTMLCanvasElement);
+    const chart = init(canvas as unknown as HTMLCanvasElement, null, {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+    });
     let option: EChartsOption;
 
     option = {
@@ -346,10 +357,13 @@ export class HelloWorldModel extends Observable {
 
   canvasReady7(args) {
     const canvas = args.object as Canvas;
-    canvas.ignorePixelScaling = true;
+    canvas.isUserInteractionEnabled = true;
+    canvas.ignoreTouchEvents = false;
 
-    const chart = init(canvas as unknown as HTMLCanvasElement, "", {
-      useDirtyRect: true,
+    const chart = init(canvas as unknown as HTMLCanvasElement, null, {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
     });
 
     const schema = [
@@ -649,9 +663,14 @@ export class HelloWorldModel extends Observable {
 
   canvasReady6(args) {
     const canvas = args.object as Canvas;
-    canvas.ignorePixelScaling = true;
+    // canvas.ignorePixelScaling = true;
 
-    const chart = init(canvas as unknown as HTMLCanvasElement);
+    const chart = init(canvas as unknown as HTMLCanvasElement, null, {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+      useCoarsePointer: true,
+    });
 
     let option: any;
     let base = +new Date(1968, 9, 3);
@@ -727,9 +746,12 @@ export class HelloWorldModel extends Observable {
 
   canvasReady3(args) {
     const canvas = args.object as Canvas;
-    // canvas.ignorePixelScaling = true;
-    // canvas.upscaleProperty = false;
-    const chart = init(canvas as unknown as HTMLCanvasElement);
+    const chart = init(canvas as unknown as HTMLCanvasElement, null, {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+      useCoarsePointer: true,
+    });
 
     let option: any;
 
@@ -929,27 +951,48 @@ export class HelloWorldModel extends Observable {
     const dips = Screen.mainScreen.scale;
     const pixels = 1;
 
+    global.window.devicePixelRatio = global.devicePixelRatio = 40;
+
     // draw a rectangle
     ctx.fillStyle = "red";
     ctx.fillRect(10, 10, 100, 100);
 
+    global.window.devicePixelRatio = global.devicePixelRatio = 2;
+
+    // draw a rectangle
+    ctx.fillStyle = "green";
+    ctx.fillRect(10, 10, 100, 100);
     // draw a circle
-    ctx.fillStyle = "blue";
-    ctx.beginPath();
-    ctx.arc(160 * dips, 60 * dips, 50 * dips, 0, Math.PI * 2);
-    ctx.fill();
+    // ctx.fillStyle = "blue";
+    // ctx.beginPath();
+    // ctx.arc(160 * dips, 60 * dips, 50 * dips, 0, Math.PI * 2);
+    // ctx.fill();
   }
 
   canvasReady8(args) {
-    console.log('canvas ready 8!')
-    const canvas = args.object as Canvas;
-    // canvas.ignorePixelScaling = true;
-    canvas.upscaleProperty = false;
-    const chart = init(canvas as unknown as HTMLCanvasElement);
-    
+    console.log("canvas ready 8!");
+    const canvas = args.object as NSHTMLCanvasElement;
+    canvas.getBoundingClientRect = () => {
+      return {
+        left: 0,
+        top: 0,
+        right: 392.72727272727275,
+        bottom: 850.9090909090909,
+        x: 0,
+        y: 0,
+        width: 392.72727272727275,
+        height: 850.9090909090909,
+      };
+    };
+
+    console.log(global.devicePixelRatio);
+    const chart = init(canvas as unknown as HTMLCanvasElement, null, {
+      // renderer: 'svg'
+    });
+
     function setData(_rawData) {
       // console.log(_rawData);
-      // var countries = ['Australia', 'Canada', 'China', 'Cuba', 'Finland', 'France', 'Germany', 'Iceland', 'India', 'Japan', 'North Korea', 'South Korea', 'New Zealand', 'Norway', 'Poland', 'Russia', 'Turkey', 'United Kingdom', 'United States'];
+      // const countries = ['Australia', 'Canada', 'China', 'Cuba', 'Finland', 'France', 'Germany', 'Iceland', 'India', 'Japan', 'North Korea', 'South Korea', 'New Zealand', 'Norway', 'Poland', 'Russia', 'Turkey', 'United Kingdom', 'United States'];
       const countries = [
         "Finland",
         "Australia",
@@ -1033,9 +1076,77 @@ export class HelloWorldModel extends Observable {
         series: seriesList,
       };
       chart.setOption(option);
+      const dUrl = canvas.toDataURL("image/png", 1);
+      // for every 255 chars in dUrl console log
+      for (let i = 0; i < dUrl.length; i += 255) {
+        console.log(dUrl.slice(i, i + 255));
+      }
     }
 
     setData(data);
+  }
+
+  canvasReady9(args) {
+    console.log("canvas ready 8!");
+    const canvas = args.object as Canvas;
+    // canvas.ignorePixelScaling = true;
+    // canvas.upscaleProperty = false;
+    const chart = init(canvas as unknown as HTMLCanvasElement, null, {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+    });
+
+    const option = {
+      tooltip: {},
+      backgroundColor: "#fff",
+      visualMap: {
+        show: false,
+        dimension: 2,
+        min: 0,
+        max: 30,
+        inRange: {
+          color: [
+            "#313695",
+            "#4575b4",
+            "#74add1",
+            "#abd9e9",
+            "#e0f3f8",
+            "#ffffbf",
+            "#fee090",
+            "#fdae61",
+            "#f46d43",
+            "#d73027",
+            "#a50026",
+          ],
+        },
+      },
+      xAxis3D: {
+        type: "value",
+      },
+      yAxis3D: {
+        type: "value",
+      },
+      zAxis3D: {
+        type: "value",
+      },
+      grid3D: {
+        viewControl: {
+          projection: "orthographic",
+        },
+      },
+      series: [
+        {
+          type: "line3D",
+          data: data,
+          lineStyle: {
+            width: 4,
+          },
+        },
+      ],
+    };
+
+    chart.setOption(option);
   }
 
   private updateMessage() {
