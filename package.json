@@ -7,13 +7,14 @@
     "postinstall": "npx patch-package"
   },
   "dependencies": {
-    "@nativescript/canvas": "2.0.0-webgpu.4",
-    "@nativescript/canvas-media": "2.0.0-webgpu.4",
-    "@nativescript/canvas-polyfill": "2.0.0-beta.8",
+    "@nativescript/canvas": "2.0.0-webgpu.11",
+    "@nativescript/canvas-media": "2.0.0-webgpu.11",
+    "@nativescript/canvas-polyfill": "2.0.0-webgpu.11",
     "@nativescript/core": "~8.8.0",
     "@nativescript/theme": "^3.1.0",
     "echarts": "5.4.3",
-    "echarts-gl": "^2.0.9"
+    "echarts-gl": "^2.0.9",
+    "echarts-liquidfill": "^3.1.0"
   },
   "devDependencies": {
     "@nativescript/android": "8.8.2",

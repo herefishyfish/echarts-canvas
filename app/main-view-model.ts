@@ -9,6 +9,7 @@ import {
 } from "@nativescript/core";
 import { init, EChartsOption, graphic, util, setPlatformAPI } from "echarts";
 import { data } from "./data/life-expectancy-table";
+import "echarts-liquidfill";
 
 // global.devicePixelRatio = 4;
 // globalThis.devicePixelRatio = 4;
@@ -140,7 +141,7 @@ export class HelloWorldModel extends Observable {
   }
 
   canvasReady5(args: LoadEventData) {
-    console.log("canvasReady25");
+    console.log("canvasReady5");
     const canvas = args.object as Canvas;
     // canvas.ignorePixelScaling = true;
 
@@ -168,12 +169,12 @@ export class HelloWorldModel extends Observable {
         triggerOn: "none",
         formatter: function (params) {
           return (
-            "<StackLayout>" +
+            "<AbsoluteLayout>" +
             "<Label>X: 123</Label>" +
             // params.data[0].toFixed(2) +
             // // '<br>Y: ' +
             // params.data[1].toFixed(2) +
-            "</StackLayout>"
+            "</AbsoluteLayout>"
           );
         },
       },
@@ -1145,6 +1146,151 @@ export class HelloWorldModel extends Observable {
           data: data,
           lineStyle: {
             width: 4,
+          },
+        },
+      ],
+    };
+
+    chart.setOption(option);
+  }
+
+  canvasReady10(args) {
+    const canvas = args.object as Canvas;
+    const chart = init(canvas as unknown as HTMLCanvasElement, "dark", {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+    });
+
+    const gaugeData = [
+      {
+        value: 20,
+        name: "Perfect",
+        title: {
+          offsetCenter: ["0%", "-35%"],
+        },
+        detail: {
+          valueAnimation: true,
+          offsetCenter: ["0%", "-20%"],
+        },
+      },
+      {
+        value: 40,
+        name: "Good",
+        title: {
+          offsetCenter: ["0%", "-5%"],
+        },
+        detail: {
+          valueAnimation: true,
+          offsetCenter: ["0%", "10%"],
+        },
+      },
+      {
+        value: 60,
+        name: "Commonly",
+        title: {
+          offsetCenter: ["0%", "25%"],
+        },
+        detail: {
+          valueAnimation: true,
+          offsetCenter: ["0%", "40%"],
+        },
+      },
+    ];
+    const option = {
+      series: [
+        {
+          type: "gauge",
+          startAngle: 90,
+          endAngle: -270,
+          pointer: {
+            show: false,
+          },
+          progress: {
+            show: true,
+            overlap: false,
+            roundCap: true,
+            clip: false,
+            itemStyle: {
+              borderWidth: 1,
+              borderColor: "#464646",
+            },
+          },
+          axisLine: {
+            lineStyle: {
+              width: 40,
+            },
+          },
+          splitLine: {
+            show: false,
+            distance: 0,
+            length: 10,
+          },
+          axisTick: {
+            show: false,
+          },
+          axisLabel: {
+            show: false,
+            distance: 50,
+          },
+          data: gaugeData,
+          title: {
+            fontSize: 14,
+          },
+          detail: {
+            width: 50,
+            height: 14,
+            fontSize: 14,
+            color: "inherit",
+            borderColor: "inherit",
+            borderRadius: 20,
+            borderWidth: 1,
+            formatter: "{value}%",
+          },
+        },
+      ],
+    };
+
+    chart.setOption(option);
+
+    setInterval(function () {
+      gaugeData[0].value = +(Math.random() * 100).toFixed(2);
+      gaugeData[1].value = +(Math.random() * 100).toFixed(2);
+      gaugeData[2].value = +(Math.random() * 100).toFixed(2);
+      chart.setOption({
+        series: [
+          {
+            data: gaugeData,
+            pointer: {
+              show: false,
+            },
+          },
+        ],
+      });
+    }, 2000);
+  }
+
+  canvasReady11(args) {
+    const canvas = args.object as Canvas;
+    const chart = init(canvas as unknown as HTMLCanvasElement, "dark", {
+      devicePixelRatio: Screen.mainScreen.scale,
+      width: Screen.mainScreen.widthDIPs,
+      height: Screen.mainScreen.heightDIPs,
+    });
+
+    const option = {
+      series: [
+        {
+          type: "liquidFill",
+          data: [0.5, 0.4, 0.3],
+          color: ["red", "#0f0", "rgb(0, 0, 255)"],
+          itemStyle: {
+            opacity: 0.6,
+          },
+          emphasis: {
+            itemStyle: {
+              opacity: 0.9,
+            },
           },
         },
       ],
